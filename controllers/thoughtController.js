@@ -25,13 +25,8 @@ module.exports = {
       //       { new: true }
       //     );
       //   })
-      //   .then((user) =>
-      //     !user
-      //       ? res.status(404).json({
-      //           message: "Video created, but found no user with that ID",
-      //         })
-      //       : res.json("Created the video 🎉")
-      //   )
+      .then((thoughtData) => res.json(thoughtData))
+
       .catch((err) => {
         console.log(err);
         res.status(500).json(err);
