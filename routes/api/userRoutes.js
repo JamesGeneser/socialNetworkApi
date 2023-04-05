@@ -7,4 +7,6 @@ const {
 
 router.route("/").get(getUsers).post(postNewUser);
 
-router.route("/userId").get;
+router.route("/userId").get(getSingleUser);
+
+module.exports = router;

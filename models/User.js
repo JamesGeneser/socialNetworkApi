@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const Thought = require("./Thought");
 
 const userSchema = new Schema(
   {
@@ -14,8 +15,8 @@ const userSchema = new Schema(
       unique: true,
       mustmatch: true,
     },
-    thoughts: [thoughtSchema],
-    friends: [friendsSchema],
+    thoughts: [Thought],
+    // friends: [friendsSchema],
   },
   {
     toJSON: {
@@ -24,3 +25,6 @@ const userSchema = new Schema(
     },
   }
 );
+const User = model("user", userSchema);
+
+module.exports = User;

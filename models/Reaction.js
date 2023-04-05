@@ -1,8 +1,10 @@
+const { ObjectId } = require("bson");
 const { Schema, model } = require("mongoose");
 
 const reactionSchema = new Schema({
   reactionId: {
-    //Use Mongoose's ObjectId data type
+    type: Schema.Types.ObjectId,
+    populate: ObjectId,
     //Default value is set to a new ObjectId
   },
   reactionBody: {
@@ -16,6 +18,7 @@ const reactionSchema = new Schema({
   },
   createdAt: {
     type: Date,
+    default: Date.now,
     //Set default value to the current timestamp
     //Use a getter method to format the timestamp on query
   },

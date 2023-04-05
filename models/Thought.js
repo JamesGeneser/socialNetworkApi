@@ -1,4 +1,5 @@
-const { Schema, model } = require("mongoose");
+const { Schema } = require("mongoose");
+const Reaction = require("./Reaction");
 
 const thoughtSchema = new Schema(
   {
@@ -12,6 +13,7 @@ const thoughtSchema = new Schema(
     createdAt: {
       type: Date,
       required: true,
+      default: Date.now,
       //set default value to the current timestamp
       //use a getter method to format timestamp on query
     },
@@ -20,7 +22,7 @@ const thoughtSchema = new Schema(
 
       required: true,
     },
-    reactions: [reactionSchema],
+    reactions: [Reaction],
   },
   {
     toJSON: {
@@ -30,3 +32,7 @@ const thoughtSchema = new Schema(
     },
   }
 );
+
+const Thought = ("thought", thoughtSchema);
+
+module.exports = Thought;
