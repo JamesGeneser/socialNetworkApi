@@ -112,4 +112,10 @@ module.exports = {
         res.status(500).json(err);
       });
   },
+  deleteThought(req, res) {
+    Thought.findOneAndDelete(req.body).then((thought) => {
+      res.json("thought deleted");
+      return User.findOneAndDelete({ _id: req.body.userId });
+    });
+  },
 };

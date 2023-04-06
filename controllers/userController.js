@@ -42,24 +42,24 @@ module.exports = {
 
   // create a new friend in friend list
   postNewFriend(req, res) {
-    User.findOne({ friends });
-    populate("userId");
-    exec(function (err, friend) {
-      if (err) return handleError;
-      console.log("friend added!");
-    });
-    // User.create(req.body)
-    //   .then((friend) => {
-    //     return User.findOneAndUpdate(
-    //       { _id: req.body.userId },
-    //       { $addToSet: { friends: friend.id } },
-    //       { new: true }
-    //     );
-    //   })
-    //   .then((friend) => res.json(friend))
-    //   .catch((err) => {
-    //     console.log(err);
-    //     res.status(500).json(err);
-    //   });
+    // User.findOne({ _id: req.params.userId });
+    // populate("userId");
+    // exec(function (err, friend) {
+    //   if (err) return handleError;
+    //   console.log("friend added!");
+    // });
+    User.create(req.body)
+      .then((friend) => {
+        return User.insertMany(
+          { _id: req.body.userId },
+          { $addToSet: { friends: friend.id } },
+          { new: true }
+        );
+      })
+      .then((friend) => res.json(friend))
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
   },
 };
