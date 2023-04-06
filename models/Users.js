@@ -15,13 +15,18 @@ const userSchema = new Schema(
       unique: true,
       mustmatch: true,
     },
-    thoughts: { type: [Thought.schema], required: true },
+    thoughts: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Thought",
+      },
+    ],
+    // thoughts: { type: [Thought.schema], required: true },
     // friends: [friendsSchema],
   },
   {
     toJSON: {
       virtuals: true,
-      ref: "User",
     },
   }
 );

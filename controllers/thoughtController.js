@@ -1,4 +1,4 @@
-const { Thought } = require("../models");
+const { Thought, User } = require("../models");
 
 module.exports = {
   getThoughts(req, res) {
@@ -18,13 +18,13 @@ module.exports = {
 
   postNewThought(req, res) {
     Thought.create(req.body)
-      //   .then((Thought) => {
-      //     return User.findOneAndUpdate(
-      //       { _id: req.body.userId },
-      //       { $addToSet: { videos: video._id } },
-      //       { new: true }
-      //     );
-      //   })
+      .then((thought) => {
+        return User.findOneAndUpdate(
+          { _id: req.body.userId },
+          { $addToSet: { thoughts: thought.id } },
+          { new: true }
+        );
+      })
       .then((thoughtData) => res.json(thoughtData))
 
       .catch((err) => {
