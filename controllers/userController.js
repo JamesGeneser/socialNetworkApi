@@ -1,10 +1,11 @@
-const { exec } = require("child_process");
-const { User } = require("../models");
-const { populate } = require("../models/Thoughts");
+// const { exec } = require("child_process");
+const { User, Application } = require("../models");
+// const { populate, validate } = require("../models/Thoughts");
 
 module.exports = {
   getUsers(req, res) {
     User.find()
+
       .then((users) => res.json(users))
       .catch((err) => res.status(500).json(err));
   },
@@ -27,36 +28,32 @@ module.exports = {
         res.status(500).json(err);
       });
   },
-
-  getFriends(req, res) {
-    User.findOne({ _id: req.params.userId })
-      .select("-__v")
-      .then((friends) => res.json(friends))
+  deleteUser(req, res) {
+    User.findOneAndRemove({ _id: req.params.userId })
       .then((user) =>
         !user
           ? res.status(404).json({ message: "No user with that ID" })
-          : res.json(user.friends)
+          : Application.deleteMany({ _id: { $in: user.applications } })
       )
+      .then(() => res.json({ message: "User and associated apps deleted!" }))
       .catch((err) => res.status(500).json(err));
   },
 
   // create a new friend in friend list
-  postNewFriend(req, res) {
-    // User.findOne({ _id: req.params.userId });
-    // populate("userId");
-    // exec(function (err, friend) {
-    //   if (err) return handleError;
-    //   console.log("friend added!");
-    // });
-    User.create(req.body)
-      .then((friend) => {
-        return User.insertMany(
-          { _id: req.body.userId },
-          { $addToSet: { friends: friend.id } },
-          { new: true }
-        );
+  postNewFriend({ params }, res) {
+    User.findOneandUpdate(
+      { _id: params.userId },
+      { $addToSet: { friends: params.id } },
+      { new: true, runValidators: true }
+    )
+
+      .then((dbUserData) => {
+        res.json(dbUserData);
+        if (!dbUserData) {
+          res.startus(404).json({ message: "No user found by that id" });
+        }
       })
-      .then((friend) => res.json(friend))
+
       .catch((err) => {
         console.log(err);
         res.status(500).json(err);
