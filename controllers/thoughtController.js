@@ -96,4 +96,20 @@ module.exports = {
   //       )
   //       .catch((err) => res.status(500).json(err));
   //   },
+  updateThought(req, res) {
+    Thought.findOneAndUpdate(req.body)
+      .then((thought) => {
+        return User.findOneAndUpdate(
+          { _id: req.body.userId },
+          { $addToSet: { thoughts: thought.id } },
+          { new: true }
+        );
+      })
+      .then((thoughtData) => res.json(thoughtData))
+
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
+  },
 };
