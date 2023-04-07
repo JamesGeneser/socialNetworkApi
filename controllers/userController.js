@@ -1,5 +1,5 @@
 // const { exec } = require("child_process");
-const { User, Application } = require("../models");
+const { User } = require("../models");
 // const { populate, validate } = require("../models/Thoughts");
 
 module.exports = {
@@ -40,20 +40,21 @@ module.exports = {
   },
 
   // create a new friend in friend list
-  postNewFriend({ params }, res) {
-    User.findOneandUpdate(
-      { _id: params.userId },
-      { $addToSet: { friends: params.id } },
+  postNewFriend(req, res) {
+    console.log(req.params.userId);
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $addToSet: { friends: req.params.friendsId } },
       { new: true, runValidators: true }
     )
-
       .then((dbUserData) => {
-        res.json(dbUserData);
+        console.log(req.params.userId);
         if (!dbUserData) {
-          res.startus(404).json({ message: "No user found by that id" });
+          res.status(404).json({ message: "No user found by that id" });
+          return;
         }
+        res.json(dbUserData);
       })
-
       .catch((err) => {
         console.log(err);
         res.status(500).json(err);
