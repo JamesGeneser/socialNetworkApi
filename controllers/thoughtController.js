@@ -99,7 +99,7 @@ module.exports = {
   updateThought(req, res) {
     Thought.findOneAndUpdate(req.body)
       .then((thought) => {
-        return User.findOneAndUpdate(
+        User.findOneAndUpdate(
           { _id: req.body.userId },
           { $addToSet: { thoughts: thought.id } },
           { new: true }
@@ -117,5 +117,31 @@ module.exports = {
       res.json("thought deleted");
       return User.findOneAndDelete({ _id: req.body.userId });
     });
+  },
+
+  postNewReaction(req, res) {
+    Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $addToSet: { reactions: req.body } },
+      { new: true, runValidators: true }
+    )
+      .then((dbThoughtData) => {
+        if (!dbThoughtData) {
+          res.status(404).json({ message: "No thought with this id" });
+          return;
+        }
+        res.json(dbThoughtData);
+      })
+      .catch((err) => res.json(err));
+  },
+
+  deleteReaction(req, res) {
+    Thought.findOneAndUpdate(
+      { _id: req.params.thoughtId },
+      { $pull: { reactions: { reactionId: req.params.reactionId } } },
+      { new: true, runValidators: true }
+    )
+      .then((dbThoughtData) => res.json(dbThoughtData))
+      .catch((err) => res.json(err));
   },
 };
