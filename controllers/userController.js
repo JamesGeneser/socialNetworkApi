@@ -41,14 +41,12 @@ module.exports = {
 
   // create a new friend in friend list
   postNewFriend(req, res) {
-    console.log(req.params.userId);
     User.findOneAndUpdate(
       { _id: req.params.userId },
       { $addToSet: { friends: req.params.friendsId } },
       { new: true, runValidators: true }
     )
       .then((dbUserData) => {
-        console.log(req.params.userId);
         if (!dbUserData) {
           res.status(404).json({ message: "No user found by that id" });
           return;
@@ -59,5 +57,21 @@ module.exports = {
         console.log(err);
         res.status(500).json(err);
       });
+  },
+
+  //delete a friend
+  deleteFriend(req, res) {
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $pull: { friends: req.params.friendsId } },
+      { new: true }
+    )
+      .then((dbUserData) => {
+        if (!dbUserData) {
+          return res.status(404).json({ message: "No user found by the id" });
+        }
+        res.json(dbUserData);
+      })
+      .catch((err) => res.json(err));
   },
 };
